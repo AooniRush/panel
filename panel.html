@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ログインページ</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f9;
+            margin: 0;
+        }
+        .login-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .login-container h2 {
+            text-align: center;
+        }
+        .login-container input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        .login-container button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .login-container button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-container">
+    <h2>ログイン</h2>
+    <form id="loginForm">
+        <input type="text" id="username" placeholder="ユーザー名" required><br>
+        <input type="password" id="password" placeholder="パスワード" required><br>
+        <button type="submit">ログイン</button>
+    </form>
+    <p id="error-message" style="color: red; text-align: center; display: none;">ユーザー名またはパスワードが間違っています。</p>
+</div>
+
+<script>
+    // サンプルのユーザー名とパスワード
+    const correctUsername = 'admin';
+    const correctPassword = 'password123';
+
+    document.getElementById('loginForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        // フォームから入力された値を取得
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        // ユーザー名とパスワードの確認
+        if (username === correctUsername && password === correctPassword) {
+            // ログイン成功時にパネルへ遷移
+            window.location.href = 'panel.html';  // ここでパネルページにリダイレクト
+        } else {
+            // ログイン失敗時のエラーメッセージ表示
+            document.getElementById('error-message').style.display = 'block';
+        }
+    });
+</script>
+
+</body>
+</html>
