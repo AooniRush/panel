@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Auth0 Login</title>
+    <title>GitHub Pages ログイン</title>
     <script src="https://cdn.auth0.com/js/auth0-spa-js/1.19/auth0-spa-js.production.js"></script>
 </head>
 <body>
-    <h1>ようこそ、GitHub Pages!</h1>
+    <h1>GitHub Pages パネルへようこそ！</h1>
     <button id="login">ログイン</button>
     <button id="logout" style="display:none;">ログアウト</button>
-    
+
     <div id="user-info" style="display:none;">
         <h2>ユーザー情報</h2>
         <pre id="user-details"></pre>
@@ -19,9 +19,9 @@
     <script>
         // Auth0 設定
         const auth0 = await createAuth0Client({
-            domain: 'YOUR_AUTH0_DOMAIN',
-            client_id: 'YOUR_CLIENT_ID',
-            redirect_uri: window.location.href
+            domain: 'YOUR_AUTH0_DOMAIN', // Auth0 のドメイン
+            client_id: 'YOUR_CLIENT_ID', // Auth0 のクライアントID
+            redirect_uri: window.location.href // リダイレクトURL
         });
 
         const loginButton = document.getElementById('login');
@@ -41,7 +41,7 @@
             });
         });
 
-        // ページが読み込まれたときに認証状態を確認
+        // 認証状態のチェック
         const isAuthenticated = await auth0.isAuthenticated();
 
         if (isAuthenticated) {
@@ -56,7 +56,7 @@
             userInfo.style.display = 'none';
         }
 
-        // リダイレクト後に認証状態をチェック
+        // 認証後のリダイレクト処理
         if (window.location.search.includes('code=')) {
             await auth0.handleRedirectCallback();
             window.history.replaceState({}, document.title, window.location.pathname);
