@@ -4,15 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Auth0 ログイン</title>
-    <script src="https://cdn.auth0.com/js/auth0-spa-js/1.19/auth0-spa-js.production.js"></script>
-</head>
-<body>
-    <h1>Auth0 ログイン</h1>
-    <button id="login">ログイン</button>
+    <!-- Auth0のJS SDKをモジュールとして読み込む -->
+    <script type="module">
+        import createAuth0Client from 'https://cdn.auth0.com/js/auth0-spa-js/1.19/auth0-spa-js.production.js';
 
-    <script>
         // Auth0 設定
-        async function initializeAuth() {
+        const initializeAuth = async () => {
             // Auth0 クライアントの初期化
             const auth0 = await createAuth0Client({
                 domain: 'dev-yre2hyy5a06xopyz.us.auth0.com', // Auth0 のドメイン
@@ -27,10 +24,14 @@
                 console.log("ログインボタンがクリックされました");
                 await auth0.loginWithRedirect(); // 認証リダイレクトを開始
             });
-        }
+        };
 
         // 初期化関数を実行
         initializeAuth();
     </script>
+</head>
+<body>
+    <h1>Auth0 ログイン</h1>
+    <button id="login">ログイン</button>
 </body>
 </html>
