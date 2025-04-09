@@ -11,14 +11,14 @@
     <script>
         // Auth0 設定
         const auth0 = await createAuth0Client({
-            domain: 'YOUR_AUTH0_DOMAIN',
-            client_id: 'YOUR_CLIENT_ID',
-            redirect_uri: window.location.href
+            domain: 'YOUR_AUTH0_DOMAIN', // Auth0 のドメイン
+            client_id: 'YOUR_CLIENT_ID', // Auth0 のクライアントID
+            redirect_uri: window.location.href // リダイレクトURL
         });
 
-        // リダイレクト後に認証情報を処理
+        // リダイレクト後の処理
         await auth0.handleRedirectCallback();
-        window.location.href = window.location.origin;
+        window.location.href = window.location.origin; // 元のページにリダイレクト
     </script>
 </body>
 </html>
