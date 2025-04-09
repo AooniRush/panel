@@ -3,81 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ログインページ</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f4f4f9;
-            margin: 0;
-        }
-        .login-container {
-            background-color: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-        .login-container h2 {
-            text-align: center;
-        }
-        .login-container input {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 5px;
-            border: 1px solid #ddd;
-        }
-        .login-container button {
-            width: 100%;
-            padding: 10px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-        .login-container button:hover {
-            background-color: #45a049;
-        }
-    </style>
+    <title>Auth0 Login</title>
+    <script src="https://cdn.auth0.com/js/auth0-spa-js/1.19/auth0-spa-js.production.js"></script>
 </head>
 <body>
+    <h1>ようこそ、GitHub Pages!</h1>
+    <button id="login">ログイン</button>
+    <button id="logout" style="display:none;">ログアウト</button>
+    
+    <div id="user-info" style="display:none;">
+        <h2>ユーザー情報</h2>
+        <pre id="user-details"></pre>
+    </div>
 
-<div class="login-container">
-    <h2>ログイン</h2>
-    <form id="loginForm">
-        <input type="text" id="username" placeholder="ユーザー名" required><br>
-        <input type="password" id="password" placeholder="パスワード" required><br>
-        <button type="submit">ログイン</button>
-    </form>
-    <p id="error-message" style="color: red; text-align: center; display: none;">ユーザー名またはパスワードが間違っています。</p>
-</div>
+    <script>
+        // Auth0 設定
+        const auth0 = await createAuth0Client({
+            domain: 'YOUR_AUTH0_DOMAIN',
+            client_id: 'YOUR_CLIENT_ID',
+            redirect_uri: window.location.href
+        });
 
-<script>
-    // サンプルのユーザー名とパスワード
-    const correctUsername = 'admin';
-    const correctPassword = 'password123';
+        const loginButton = document.getElementById('login');
+        const logoutButton = document.getElementById('logout');
+        const userInfo = document.getElementById('user-info');
+        const userDetails = document.getElementById('user-details');
 
-    document.getElementById('loginForm').addEventListener('submit', function (event) {
-        event.preventDefault();
+        // ログインボタンのクリック時
+        loginButton.addEventListener('click', async () => {
+            await auth0.loginWithRedirect();
+        });
 
-        // フォームから入力された値を取得
-        const username = document.getElementById('username').value;
-        const password = document.getElementById('password').value;
+        // ログアウトボタンのクリック時
+        logoutButton.addEventListener('click', async () => {
+            await auth0.logout({
+                returnTo: window.location.origin
+            });
+        });
 
-        // ユーザー名とパスワードの確認
-        if (username === correctUsername && password === correctPassword) {
-            // ログイン成功時にパネルへ遷移
-            window.location.href = 'panel.html';  // ここでパネルページにリダイレクト
+        // ページが読み込まれたときに認証状態を確認
+        const isAuthenticated = await auth0.isAuthenticated();
+
+        if (isAuthenticated) {
+            const user = await auth0.getUser();
+            loginButton.style.display = 'none';
+            logoutButton.style.display = 'inline-block';
+            userInfo.style.display = 'block';
+            userDetails.textContent = JSON.stringify(user, null, 2);
         } else {
-            // ログイン失敗時のエラーメッセージ表示
-            document.getElementById('error-message').style.display = 'block';
+            loginButton.style.display = 'inline-block';
+            logoutButton.style.display = 'none';
+            userInfo.style.display = 'none';
         }
-    });
-</script>
 
+        // リダイレクト後に認証状態をチェック
+        if (window.location.search.includes('code=')) {
+            await auth0.handleRedirectCallback();
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+    </script>
 </body>
 </html>
