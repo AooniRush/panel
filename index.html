@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AooniGokko</title>
+    <title>Auth0 ログイン</title>
     <!-- Auth0のJS SDKをモジュールとして読み込む -->
     <script type="module">
-        import { createAuth0Client } from 'https://cdn.auth0.com/js/auth0-spa-js/1.19/auth0-spa-js.production.js';
+        import createAuth0Client from 'https://cdn.auth0.com/js/auth0-spa-js/1.19/auth0-spa-js.production.js';
 
         // Auth0 設定
         const initializeAuth = async () => {
             // Auth0 クライアントの初期化
             const auth0 = await createAuth0Client({
-                domain: 'dev-yre2hyy5a06xopyz.us.auth0.com', // Auth0 のドメイン
-                client_id: 'NQZD3AscyuKlxXDtAuwoQWcfFr4vMTpM', // Auth0 のクライアントID
+                domain: 'YOUR_AUTH0_DOMAIN', // Auth0 のドメイン
+                client_id: 'YOUR_CLIENT_ID', // Auth0 のクライアントID
                 redirect_uri: window.location.href // リダイレクトURL
             });
 
@@ -31,7 +31,7 @@
     </script>
 </head>
 <body>
-    <h1>AooniGokko 管理用パネルへようこそ！</h1>
+    <h1>Auth0 ログイン</h1>
     <button id="login">ログイン</button>
 </body>
 </html>
