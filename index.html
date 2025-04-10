@@ -2,20 +2,23 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>Firebase ログイン</title>
+  <title>ログインパネル</title>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <h1>ログイン / 新規登録</h1>
-  <input type="email" id="email" placeholder="メールアドレス"><br><br>
-  <input type="password" id="password" placeholder="パスワード"><br><br>
-  <button onclick="signUp()">新規登録</button>
-  <button onclick="signIn()">ログイン</button>
-  <p id="message"></p>
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+  <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md">
+    <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">ログイン</h2>
+    <input type="email" id="email" placeholder="メールアドレス" class="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+    <input type="password" id="password" placeholder="パスワード" class="w-full p-3 mb-6 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+    <button onclick="signIn()" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 rounded-lg transition duration-200">
+      ログイン
+    </button>
+    <p id="message" class="text-center text-sm text-red-500 mt-4"></p>
+  </div>
 
   <script>
-    // 🔑 ここをあなたのfirebaseConfigで置き換えてください！
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 
 const firebaseConfig = {
@@ -39,24 +42,14 @@ const firebaseConfig = {
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
-    function signUp() {
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-      auth.createUserWithEmailAndPassword(email, password)
-        .then(() => {
-          document.getElementById("message").textContent = "登録完了！";
-        })
-        .catch(error => {
-          document.getElementById("message").textContent = error.message;
-        });
-    }
-
     function signIn() {
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
       auth.signInWithEmailAndPassword(email, password)
         .then(() => {
           document.getElementById("message").textContent = "ログイン成功！";
+          // ここでページ遷移したい場合は以下を使ってください：
+          // location.href = "panel.html";
         })
         .catch(error => {
           document.getElementById("message").textContent = error.message;
