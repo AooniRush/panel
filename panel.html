@@ -4,15 +4,21 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>管理用パネル</title>
-  <link rel="stylesheet" href="styles.css" />
   <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
+      color: #fff;
+    }
+
     .header-title {
       position: absolute;
       top: 20px;
       left: 20px;
       font-size: 1.2rem;
       font-weight: bold;
-      color: #2c3e50;
+      color: #ecf0f1;
     }
 
     .user-info {
@@ -42,19 +48,43 @@
       background-color: #c0392b;
     }
 
-    .panel-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
+    .clickable-box {
+      position: absolute;
+      top: 20px;
+      left: 180px;
+      background-color: #3498db;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      user-select: none;
     }
 
-    .panel-box {
-      background-color: #f5f5f5;
-      padding: 40px;
-      border-radius: 12px;
-      box-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
-      text-align: center;
+    .clickable-box:hover {
+      background-color: #2980b9;
+    }
+
+    .notification {
+      position: fixed;
+      top: 80px;
+      right: 20px;
+      background-color: rgba(52, 152, 219, 0.95);
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      font-size: 0.95rem;
+      z-index: 1000;
+      opacity: 1;
+      transition: opacity 0.5s ease, transform 0.3s ease;
+    }
+
+    .hidden {
+      opacity: 0;
+      transform: translateY(-10px);
+      pointer-events: none;
     }
   </style>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
@@ -97,24 +127,37 @@
         window.location.href = "index.html";
       });
     }
+
+    function onBoxClick() {
+      showNotification("コマンドが実行されました！");
+      // 実際のコマンド送信処理をここに追加できます
+    }
+
+    function showNotification(message) {
+      const notification = document.getElementById("notification");
+      notification.textContent = message;
+      notification.classList.remove("hidden");
+
+      setTimeout(() => {
+        notification.classList.add("hidden");
+      }, 3000);
+    }
   </script>
 </head>
 <body>
-  <!-- 左上のタイトル -->
+  <!-- タイトル -->
   <div class="header-title">青鬼ごっこ管理パネル</div>
 
-  <!-- 右上のユーザー情報 -->
+  <!-- クリックボックス -->
+  <div class="clickable-box" onclick="onBoxClick()">クリック</div>
+
+  <!-- ユーザー情報（右上） -->
   <div class="user-info">
     <h2 id="greeting">読み込み中...</h2>
     <button onclick="logout()">ログアウト</button>
   </div>
 
-  <!-- メインパネル -->
-  <div class="panel-container">
-    <div class="panel-box">
-      <h1>管理用パネル</h1>
-      <p>ここにコマンド送信や管理機能を追加できます。</p>
-    </div>
-  </div>
+  <!-- 通知 -->
+  <div id="notification" class="notification hidden">コマンドが実行されました！</div>
 </body>
 </html>
