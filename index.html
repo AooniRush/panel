@@ -1,37 +1,67 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Auth0 ログイン</title>
-    <!-- Auth0 SDKを読み込む -->
-    <script src="https://cdn.auth0.com/js/auth0-spa-js/1.19/auth0-spa-js.production.js"></script>
+  <meta charset="UTF-8">
+  <title>Firebase ログイン</title>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 </head>
 <body>
-    <h1>Auth0 ログイン</h1>
-    <button id="login">ログイン</button>
+  <h1>ログイン / 新規登録</h1>
+  <input type="email" id="email" placeholder="メールアドレス"><br><br>
+  <input type="password" id="password" placeholder="パスワード"><br><br>
+  <button onclick="signUp()">新規登録</button>
+  <button onclick="signIn()">ログイン</button>
+  <p id="message"></p>
 
-    <script>
-        // Auth0 設定
-        const initializeAuth = async () => {
-            // createAuth0Client がグローバルに定義されているので、これを使う
-            const auth0 = await createAuth0Client({
-                domain: 'dev-yre2hyy5a06xopyz.us.auth0.com', // Auth0 のドメイン
-                client_id: 'NQZD3AscyuKlxXDtAuwoQWcfFr4vMTpM', // Auth0 のクライアントID
-                redirect_uri: window.location.href // リダイレクトURL
-            });
+  <script>
+    // 🔑 ここをあなたのfirebaseConfigで置き換えてください！
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 
-            const loginButton = document.getElementById('login');
+const firebaseConfig = {
 
-            // ログインボタンのクリックイベント
-            loginButton.addEventListener('click', async () => {
-                console.log("ログインボタンがクリックされました");
-                await auth0.loginWithRedirect(); // 認証リダイレクトを開始
-            });
-        };
+  apiKey: "AIzaSyAXKTCZT9fE9slC1fbZk36OoyHt_4LkN28",
 
-        // 初期化関数を実行
-        initializeAuth();
-    </script>
+  authDomain: "aoonigokkoauth.firebaseapp.com",
+
+  projectId: "aoonigokkoauth",
+
+  storageBucket: "aoonigokkoauth.firebasestorage.app",
+
+  messagingSenderId: "460906205657",
+
+  appId: "1:460906205657:web:3d0237157dadebddd549c8",
+
+  measurementId: "G-HD92Q4NNYJ"
+
+};
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    function signUp() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      auth.createUserWithEmailAndPassword(email, password)
+        .then(() => {
+          document.getElementById("message").textContent = "登録完了！";
+        })
+        .catch(error => {
+          document.getElementById("message").textContent = error.message;
+        });
+    }
+
+    function signIn() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      auth.signInWithEmailAndPassword(email, password)
+        .then(() => {
+          document.getElementById("message").textContent = "ログイン成功！";
+        })
+        .catch(error => {
+          document.getElementById("message").textContent = error.message;
+        });
+    }
+  </script>
 </body>
 </html>
