@@ -1,83 +1,60 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ログインページ</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f4f4f9;
-            margin: 0;
-        }
-        .login-container {
-            background-color: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-        .login-container h2 {
-            text-align: center;
-        }
-        .login-container input {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 5px;
-            border: 1px solid #ddd;
-        }
-        .login-container button {
-            width: 100%;
-            padding: 10px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-        .login-container button:hover {
-            background-color: #45a049;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>青鬼ごっこ管理パネル</title>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      background-size: 400% 400%;
+      animation: nightFade 15s ease infinite;
+    }
+    @keyframes nightFade {
+      0% {background-position: 0% 50%;}
+      50% {background-position: 100% 50%;}
+      100% {background-position: 0% 50%;}
+    }
+  </style>
 </head>
-<body>
+<body class="flex items-center justify-center min-h-screen">
+  <div class="bg-white bg-opacity-90 p-8 rounded-2xl shadow-2xl w-full max-w-md">
+    <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">青鬼ごっこ管理パネル</h2>
+    <div id="userInfo" class="text-center mb-4">
+      <p>ログインユーザー: <span id="userEmail" class="font-semibold text-blue-600"></span></p>
+    </div>
+    
+    <div class="text-center mb-4">
+      <button onclick="logout()" class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 rounded-lg transition duration-200">
+        ログアウト
+      </button>
+    </div>
 
-<div class="login-container">
-    <h2>ログイン</h2>
-    <form id="loginForm">
-        <input type="text" id="username" placeholder="ユーザー名" required><br>
-        <input type="password" id="password" placeholder="パスワード" required><br>
-        <button type="submit">ログイン</button>
-    </form>
-    <p id="error-message" style="color: red; text-align: center; display: none;">ユーザー名またはパスワードが間違っています。</p>
-</div>
+    <div class="text-center">
+      <button onclick="startGame()" class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg transition duration-200">
+        ゲームを開始
+      </button>
+    </div>
+  </div>
 
-<script>
-    // サンプルのユーザー名とパスワード
-    const correctUsername = 'admin';
-    const correctPassword = 'password123';
+  <script>
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyAXKTCZT9fE9slC1fbZk36OoyHt_4LkN28",
+  authDomain: "aoonigokkoauth.firebaseapp.com",
+  projectId: "aoonigokkoauth",
+  storageBucket: "aoonigokkoauth.firebasestorage.app",
+  messagingSenderId: "460906205657",
+  appId: "1:460906205657:web:3d0237157dadebddd549c8",
+  measurementId: "G-HD92Q4NNYJ"
+};
 
-    document.getElementById('loginForm').addEventListener('submit', function (event) {
-        event.preventDefault();
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
 
-        // フォームから入力された値を取得
-        const username = document.getElementById('username').value;
-        const password = document.getElementById('password').value;
-
-        // ユーザー名とパスワードの確認
-        if (username === correctUsername && password === correctPassword) {
-            // ログイン成功時にパネルへ遷移
-            window.location.href = 'panel.html';  // ここでパネルページにリダイレクト
-        } else {
-            // ログイン失敗時のエラーメッセージ表示
-            document.getElementById('error-message').style.display = 'block';
-        }
-    });
-</script>
-
-</body>
-</html>
+    // ✅ ログインしていない場合、ログイン画面にリダイレクト
+    auth.onAuthStateChanged(user => {
+      if (!user) {
+        // ユーザーが
