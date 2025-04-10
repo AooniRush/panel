@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>管理用パネル</title>
+    <link rel="stylesheet" href="styles.css"> <!-- 外部CSSをリンク -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
     <script>
-        // Firebaseの設定
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyAXKTCZT9fE9slC1fbZk36OoyHt_4LkN28",
@@ -18,40 +18,35 @@ const firebaseConfig = {
   appId: "1:460906205657:web:3d0237157dadebddd549c8",
   measurementId: "G-HD92Q4NNYJ"
 };
-
-        // Firebaseの初期化
         const app = firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
 
-        // ページロード時に実行
-        window.onload = function () {
-            const user = auth.currentUser;
+        auth.onAuthStateChanged(function(user) {
             if (user) {
-                // ログインユーザーがいる場合、メールアドレスから@の前の部分を表示
                 const email = user.email;
-                const username = email.split('@')[0]; // @より前の部分を取得
+                const username = email.split('@')[0];
                 document.getElementById('username').innerText = username;
             } else {
-                // ログインしていない場合、ログイン画面にリダイレクト
-                window.location.href = 'login.html'; // login.html などログインページにリダイレクト
+                window.location.href = 'index.html';
             }
-        };
+        });
     </script>
 </head>
 <body>
-    <h1>管理用パネル</h1>
-    <div id="welcome">
-        <p>ログインユーザー: <span id="username">Loading...</span></p>
+    <div class="container">
+        <header>
+            <h1>管理用パネル</h1>
+        </header>
+        <div class="content">
+            <p>ログインユーザー: <span id="username">Loading...</span></p>
+            <button onclick="signOut()">ログアウト</button>
+        </div>
     </div>
 
-    <!-- ログアウトボタン -->
-    <button onclick="signOut()">ログアウト</button>
-
     <script>
-        // ログアウト処理
         function signOut() {
             auth.signOut().then(() => {
-                window.location.href = 'login.html'; // ログアウト後はログインページにリダイレクト
+                window.location.href = 'index.html';
             });
         }
     </script>
