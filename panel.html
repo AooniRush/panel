@@ -3,93 +3,77 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>管理用パネル</title>
+  <title>青鬼ごっこ管理パネル</title>
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet"/>
   <style>
     body {
       margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #001f3f;
+      font-family: 'Roboto', sans-serif;
+      background-color: #0b1a2f;
       color: #fff;
-      display: none; /* 認証確認まで非表示 */
     }
-
-    .header-title {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      font-size: 1.2rem;
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+    }
+    .title {
+      font-size: 1.5rem;
       font-weight: bold;
-      color: #ecf0f1;
     }
-
     .user-info {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      text-align: right;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
-
-    .user-info h2 {
-      margin: 0;
-      font-size: 1rem;
-    }
-
-    .user-info button {
-      margin-top: 4px;
-      padding: 6px 12px;
+    .logout-btn {
       background-color: #e74c3c;
-      color: #fff;
       border: none;
-      border-radius: 4px;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 6px;
       cursor: pointer;
-      transition: background-color 0.3s ease;
+      font-weight: bold;
     }
-
-    .user-info button:hover {
-      background-color: #c0392b;
-    }
-
-    .clickable-box {
-      position: absolute;
-      top: 100px;
-      left: 180px;
+    .command-button {
+      display: block;
+      margin: 100px auto;
+      padding: 20px 40px;
       background-color: #3498db;
+      color: white;
+      font-size: 1.2rem;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    .notification {
+      position: fixed;
+      top: 70px;
+      right: 20px;
+      background-color: #2ecc71;
       color: white;
       padding: 10px 20px;
       border-radius: 8px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      user-select: none;
-    }
-
-    .clickable-box:hover {
-      background-color: #2980b9;
-    }
-
-    .notification {
-      position: fixed;
-      top: 80px;
-      right: 20px;
-      background-color: rgba(52, 152, 219, 0.95);
-      color: #fff;
-      padding: 12px 20px;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-      font-size: 0.95rem;
-      z-index: 1000;
-      opacity: 1;
-      transition: opacity 0.5s ease, transform 0.3s ease;
-    }
-
-    .hidden {
-      opacity: 0;
-      transform: translateY(-10px);
-      pointer-events: none;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      display: none;
     }
   </style>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+</head>
+<body>
+  <header>
+    <div class="title">青鬼ごっこ管理パネル</div>
+    <div class="user-info">
+      <span id="greeting"></span>
+      <button class="logout-btn" onclick="logout()">ログアウト</button>
+    </div>
+  </header>
+
+  <button class="command-button" onclick="sendCommand()">ごっこ人狼</button>
+  <div class="notification" id="notification">コマンドが実行されました！</div>
+
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyAXKTCZT9fE9slC1fbZk36OoyHt_4LkN28",
@@ -101,62 +85,43 @@
     };
 
     firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
 
-    window.addEventListener('DOMContentLoaded', () => {
-      auth.onAuthStateChanged(user => {
-        if (user) {
-          // 表示を有効化
-          document.body.style.display = 'block';
-
-          const email = user.email;
-          const username = email.split('@')[0];
-
-          const hour = new Date().getHours();
-          let greeting = "こんにちは";
-          if (hour < 6) greeting = "おはようございます";
-          else if (hour < 12) greeting = "おはようございます";
-          else if (hour < 18) greeting = "こんにちは";
-          else greeting = "こんばんは";
-
-          document.getElementById("greeting").textContent = `${greeting}、${username}さん`;
+    firebase.auth().onAuthStateChanged(user => {
+      if (!user) {
+        window.location.href = "index.html";
+      } else {
+        const username = user.email.split("@")[0];
+        const hours = new Date().getHours();
+        let greeting;
+        if (hours < 12) {
+          greeting = "おはようございます、" + username + "さん";
+        } else if (hours < 18) {
+          greeting = "こんにちは、" + username + "さん";
         } else {
-          // 未ログインならリダイレクト
-          window.location.href = "index.html";
+          greeting = "こんばんは、" + username + "さん";
         }
-      });
+        document.getElementById("greeting").innerText = greeting;
+      }
     });
 
     function logout() {
-      auth.signOut().then(() => {
+      firebase.auth().signOut().then(() => {
         window.location.href = "index.html";
       });
     }
 
-    function onBoxClick() {
-      showNotification("コマンドが実行されました！");
-    }
-
-    function showNotification(message) {
-      const notification = document.getElementById("notification");
-      notification.textContent = message;
-      notification.classList.remove("hidden");
-
-      setTimeout(() => {
-        notification.classList.add("hidden");
-      }, 3000);
+    function sendCommand() {
+      fetch("http://mc.enderserver.jp:40957/command?cmd=function%20fille_brain:aooni_jinro")
+        .then(res => {
+          if (res.ok) {
+            const note = document.getElementById("notification");
+            note.style.display = "block";
+            setTimeout(() => {
+              note.style.display = "none";
+            }, 3000);
+          }
+        });
     }
   </script>
-</head>
-<body>
-  <div class="header-title">青鬼ごっこ管理パネル</div>
-  <div class="clickable-box" onclick="onBoxClick()">クリック</div>
-
-  <div class="user-info">
-    <h2 id="greeting">読み込み中...</h2>
-    <button onclick="logout()">ログアウト</button>
-  </div>
-
-  <div id="notification" class="notification hidden">コマンドが実行されました！</div>
 </body>
 </html>
