@@ -8,8 +8,9 @@
     body {
       margin: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #001f3f; /* ネイビーブルー */
+      background-color: #001f3f;
       color: #fff;
+      display: none; /* 認証確認まで非表示 */
     }
 
     .header-title {
@@ -91,12 +92,12 @@
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
   <script>
     const firebaseConfig = {
-      apiKey: "あなたのAPIキー",
-      authDomain: "あなたのauthDomain",
-      projectId: "あなたのprojectId",
-      storageBucket: "あなたのstorageBucket",
-      messagingSenderId: "あなたのmessagingSenderId",
-      appId: "あなたのappId"
+      apiKey: "AIzaSyAXKTCZT9fE9slC1fbZk36OoyHt_4LkN28",
+      authDomain: "aoonigokkoauth.firebaseapp.com",
+      projectId: "aoonigokkoauth",
+      storageBucket: "aoonigokkoauth.firebasestorage.app",
+      messagingSenderId: "460906205657",
+      appId: "1:460906205657:web:3d0237157dadebddd549c8"
     };
 
     firebase.initializeApp(firebaseConfig);
@@ -105,6 +106,9 @@
     window.addEventListener('DOMContentLoaded', () => {
       auth.onAuthStateChanged(user => {
         if (user) {
+          // 表示を有効化
+          document.body.style.display = 'block';
+
           const email = user.email;
           const username = email.split('@')[0];
 
@@ -117,6 +121,7 @@
 
           document.getElementById("greeting").textContent = `${greeting}、${username}さん`;
         } else {
+          // 未ログインならリダイレクト
           window.location.href = "index.html";
         }
       });
