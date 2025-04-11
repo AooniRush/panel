@@ -82,18 +82,20 @@
   <script>
     const auth = firebase.auth();
 
-    // ユーザーがログインしていない場合、ログインページへリダイレクト
-    auth.onAuthStateChanged(user => {
-      if (!user) {
-        window.location.href = 'index.html'; // ログインしていない場合、ログインページへ遷移
-      } else {
-        // ログインしている場合、挨拶の表示を行う
-        document.getElementById('greeting').textContent = getGreeting();
-      }
-    });
+    // ページが読み込まれたときにログイン状態を確認
+    window.onload = function() {
+      auth.onAuthStateChanged(user => {
+        if (!user) {
+          // ログインしていない場合、index.htmlにリダイレクト
+          window.location.href = 'index.html';
+        } else {
+          // ログインしている場合は挨拶を表示
+          document.getElementById('greeting').textContent = getGreeting(user);
+        }
+      });
+    };
 
-    // 時間に応じた挨拶を表示
-    function getGreeting() {
+    function getGreeting(user) {
       const hour = new Date().getHours();
       let greeting = "こんにちは";
 
@@ -103,17 +105,13 @@
         greeting = "こんばんは";
       }
 
-      // ユーザーの名前を @ より前に取り出し表示
-      const userEmail = firebase.auth().currentUser.email;
-      const userName = userEmail.split('@')[0];
-
+      const userName = user.email.split('@')[0];
       return `${greeting}, ${userName}さん`;
     }
 
-    // ログアウト処理
     function logout() {
-      firebase.auth().signOut().then(() => {
-        window.location.href = "index.html";  // ログアウト後、index.htmlにリダイレクト
+      auth.signOut().then(() => {
+        window.location.href = 'index.html'; // ログアウト後にindex.htmlに遷移
       }).catch((error) => {
         alert("ログアウト失敗: " + error.message);
       });
@@ -166,7 +164,7 @@
     <div class="mode-box" onclick="sendCommand('function fille_brain:aooni_kojosen', 'kojo.html')">攻城戦</div>
     <div class="mode-box" onclick="sendCommand('function fille_brain:aooni_vote', 'tohyo.html')">投票</div>
   </div>
-
+  
   <div class="toast"></div>
 </body>
 </html>
