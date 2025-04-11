@@ -111,16 +111,30 @@
     }
 
     function sendCommand() {
-      fetch("https://mc.enderserver.jp:40957/command?cmd=function%20fille_brain:aooni_jinro")
-        .then(res => {
-          if (res.ok) {
-            const note = document.getElementById("notification");
-            note.style.display = "block";
-            setTimeout(() => {
-              note.style.display = "none";
-            }, 3000);
-          }
-        });
+      fetch("https://mc.enderserver.jp:40015/command", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          cmd: "function fille_brain:aooni_jinro"
+        })
+      })
+      .then(res => {
+        if (res.ok) {
+          const note = document.getElementById("notification");
+          note.style.display = "block";
+          setTimeout(() => {
+            note.style.display = "none";
+          }, 3000);
+        } else {
+          alert("コマンドの送信に失敗しました");
+        }
+      })
+      .catch(err => {
+        console.error("エラー:", err);
+        alert("通信エラーが発生しました");
+      });
     }
   </script>
 </body>
