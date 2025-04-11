@@ -88,7 +88,7 @@
             const command = "game start";  // 実行したいコマンドを指定
 
             // 送信先URL
-            const url = "https://mc.enderserver.jp:40015/command";
+            const url = "http://localhost:40015/execute-command"; // Node.jsサーバーのURL
 
             try {
                 const response = await fetch(url, {
@@ -96,7 +96,7 @@
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ cmd: command }),
+                    body: JSON.stringify({ command: command }),
                 });
 
                 const data = await response.json();
