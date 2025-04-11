@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>モード選択画面</title>
+  <title>モード変更画面</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
@@ -45,6 +45,31 @@
       transform: scale(1.05);
     }
 
+    /* 時間に応じた挨拶 */
+    .greeting {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      font-size: 18px;
+      color: white;
+    }
+
+    /* ログアウトボタン */
+    .logout-button {
+      background-color: red;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .logout-button:hover {
+      background-color: darkred;
+    }
+
     .toast {
       position: fixed;
       top: 20px;
@@ -57,10 +82,43 @@
     }
   </style>
   <script>
-    // index.htmlから遷移していない場合、sessionStorageがないとリダイレクト
-    if (!sessionStorage.getItem("fromIndex")) {
+    // リファラーチェック
+    const allowedReferrer = "https://aoonirush.github.io/index.html";
+    if (document.referrer !== allowedReferrer) {
       window.location.href = "index.html";
     }
+
+    // 時間に応じた挨拶を表示
+    function getGreeting() {
+      const hour = new Date().getHours();
+      let greeting = "こんにちは";
+
+      if (hour < 12) {
+        greeting = "おはようございます";
+      } else if (hour >= 18) {
+        greeting = "こんばんは";
+      }
+
+      // ユーザーの名前を @ より前に取り出し表示
+      const userEmail = firebase.auth().currentUser.email;
+      const userName = userEmail.split('@')[0];
+
+      return `${greeting}, ${userName}さん`;
+    }
+
+    // ログアウト処理
+    function logout() {
+      firebase.auth().signOut().then(() => {
+        window.location.href = "index.html";  // ログアウト後、index.htmlにリダイレクト
+      }).catch((error) => {
+        alert("ログアウト失敗: " + error.message);
+      });
+    }
+
+    // ページ読み込み時に挨拶を表示
+    window.onload = function() {
+      document.getElementById('greeting').textContent = getGreeting();
+    };
 
     function sendCommand(command, redirectTo) {
       fetch("https://mc.enderserver.jp:40015/execute-command", {
@@ -94,6 +152,9 @@
   </script>
 </head>
 <body>
+  <div class="greeting" id="greeting"></div>
+  <button class="logout-button" onclick="logout()">ログアウト</button>
+  
   <h1>モード選択 管理用パネル</h1>
   <div class="grid">
     <div class="mode-box" onclick="sendCommand('function fille_brain:aooni_datu', 'datsu.html')">だつ</div>
