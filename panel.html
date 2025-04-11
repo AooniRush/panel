@@ -1,127 +1,90 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Auto Aooni2 Control Panel</title>
-    <style>
-        /* 全体のスタイル */
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f0f0f0;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-image: linear-gradient(135deg, #fbc2eb, #a6c1ee);
-            color: #333;
-        }
-
-        /* メインのコンテナ */
-        .container {
-            text-align: center;
-            border-radius: 10px;
-            background-color: white;
-            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
-            padding: 40px;
-            width: 300px;
-        }
-
-        /* ゲームボックス */
-        .game-box {
-            background-color: #4CAF50;
-            color: white;
-            padding: 20px;
-            border-radius: 10px;
-            font-size: 24px;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-
-        .game-box:hover {
-            transform: scale(1.1);
-            background-color: #45a049;
-        }
-
-        /* 通知スタイル */
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background-color: #4CAF50;
-            color: white;
-            padding: 15px;
-            border-radius: 5px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.5s ease, visibility 0.5s ease;
-        }
-
-        .notification.show {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        /* レスポンシブデザイン */
-        @media (max-width: 600px) {
-            .container {
-                width: 80%;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ごっこ人狼 コマンドパネル</title>
+  <style>
+    body {
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      font-family: 'Segoe UI', sans-serif;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .panel {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 40px;
+      text-align: center;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    }
+    .title {
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+    button {
+      background: #00c3ff;
+      border: none;
+      padding: 12px 24px;
+      font-size: 16px;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    button:hover {
+      background: #009dcf;
+    }
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #4caf50;
+      padding: 10px 20px;
+      border-radius: 8px;
+      display: none;
+    }
+  </style>
 </head>
 <body>
+  <div class="panel">
+    <div class="title">ごっこ人狼</div>
+    <button onclick="sendCommand()">ゲーム開始コマンド送信</button>
+  </div>
+  <div class="notification" id="notify">コマンドが実行されました</div>
 
-    <div class="container">
-        <div class="game-box" onclick="sendCommand()">ごっこ人狼</div>
-    </div>
-
-    <!-- 通知 -->
-    <div id="notification" class="notification">コマンドが実行されました！</div>
-
-    <script>
-        // コマンド送信関数
-        async function sendCommand() {
-            const command = "function fille_brain:aooni_jinro";  // 実行したいコマンドを指定
-
-            // 送信先URL
-            const url = "https://mc.enderserver.jp:40015/execute-command"; // Node.jsサーバーのURL
-
-            try {
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ command: command }),
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    // 通知表示
-                    showNotification("コマンドが実行されました！");
-                } else {
-                    showNotification("エラーが発生しました: " + data.message);
-                }
-            } catch (error) {
-                showNotification("エラーが発生しました: " + error.message);
-            }
+  <script>
+    function sendCommand() {
+      fetch("https://mc.enderserver.jp:40015/execute-command", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ command: "function fille_brain:aooni_jinro" })
+      })
+      .then(response => {
+        if (response.ok) {
+          showNotification();
+        } else {
+          alert("コマンド送信に失敗しました。");
         }
+      })
+      .catch(error => {
+        alert("通信エラー: " + error);
+      });
+    }
 
-        // 通知表示関数
-        function showNotification(message) {
-            const notification = document.getElementById('notification');
-            notification.textContent = message;
-            notification.classList.add('show');
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 3000);
-        }
-    </script>
-
+    function showNotification() {
+      const notify = document.getElementById("notify");
+      notify.style.display = "block";
+      setTimeout(() => {
+        notify.style.display = "none";
+      }, 3000);
+    }
+  </script>
 </body>
 </html>
