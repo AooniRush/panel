@@ -86,6 +86,9 @@
     auth.onAuthStateChanged(user => {
       if (!user) {
         window.location.href = 'index.html'; // ログインしていない場合、ログインページへ遷移
+      } else {
+        // ログインしている場合、挨拶の表示を行う
+        document.getElementById('greeting').textContent = getGreeting();
       }
     });
 
@@ -115,11 +118,6 @@
         alert("ログアウト失敗: " + error.message);
       });
     }
-
-    // ページ読み込み時に挨拶を表示
-    window.onload = function() {
-      document.getElementById('greeting').textContent = getGreeting();
-    };
 
     function sendCommand(command, redirectTo) {
       fetch("https://mc.enderserver.jp:40015/execute-command", {
@@ -155,8 +153,8 @@
 <body>
   <div class="greeting" id="greeting"></div>
   <button class="logout-button" onclick="logout()">ログアウト</button>
-  
-  <h1>モード選択 管理用パネル</h1>
+
+  <h1>モード変更画面</h1>
   <div class="grid">
     <div class="mode-box" onclick="sendCommand('function fille_brain:aooni_datu', 'datsu.html')">だつ</div>
     <div class="mode-box" onclick="sendCommand('function fille_brain:aooni_gokko', 'gokko.html')">ごっこ</div>
@@ -168,6 +166,7 @@
     <div class="mode-box" onclick="sendCommand('function fille_brain:aooni_kojosen', 'kojo.html')">攻城戦</div>
     <div class="mode-box" onclick="sendCommand('function fille_brain:aooni_vote', 'tohyo.html')">投票</div>
   </div>
+
   <div class="toast"></div>
 </body>
 </html>
