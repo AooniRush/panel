@@ -1,133 +1,136 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>青鬼ごっこ管理パネル</title>
-  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet"/>
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Roboto', sans-serif;
-      background-color: #0b1a2f;
-      color: #fff;
-    }
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 20px;
-    }
-    .title {
-      font-size: 1.5rem;
-      font-weight: bold;
-    }
-    .user-info {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .logout-btn {
-      background-color: #e74c3c;
-      border: none;
-      color: white;
-      padding: 8px 16px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-    .command-button {
-      display: block;
-      margin: 100px auto;
-      padding: 20px 40px;
-      background-color: #3498db;
-      color: white;
-      font-size: 1.2rem;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-    }
-    .notification {
-      position: fixed;
-      top: 70px;
-      right: 20px;
-      background-color: #2ecc71;
-      color: white;
-      padding: 10px 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.3);
-      display: none;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto Aooni2 Control Panel</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            text-align: center;
+        }
+
+        main {
+            padding: 20px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 0;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .response {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f8f8f8;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .response.success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+
+        .response.error {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+    </style>
 </head>
 <body>
-  <header>
-    <div class="title">青鬼ごっこ管理パネル</div>
-    <div class="user-info">
-      <span id="greeting"></span>
-      <button class="logout-btn" onclick="logout()">ログアウト</button>
-    </div>
-  </header>
 
-  <button class="command-button" onclick="sendCommand()">ごっこ人狼</button>
-  <div class="notification" id="notification">コマンドが実行されました！</div>
+    <header>
+        <h1>Auto Aooni2 Control Panel</h1>
+    </header>
 
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyAXKTCZT9fE9slC1fbZk36OoyHt_4LkN28",
-      authDomain: "aoonigokkoauth.firebaseapp.com",
-      projectId: "aoonigokkoauth",
-      storageBucket: "aoonigokkoauth.firebasestorage.app",
-      messagingSenderId: "460906205657",
-      appId: "1:460906205657:web:3d0237157dadebddd549c8"
-    };
+    <main>
+        <div class="container">
+            <h2>コマンド送信</h2>
+            <p>以下にコマンドを入力し、「送信」ボタンを押してください。</p>
+            
+            <input type="text" id="commandInput" placeholder="コマンドを入力..." />
+            <button onclick="sendCommand()">コマンド送信</button>
 
-    firebase.initializeApp(firebaseConfig);
+            <div id="response" class="response"></div>
+        </div>
+    </main>
 
-    firebase.auth().onAuthStateChanged(user => {
-      if (!user) {
-        window.location.href = "index.html";
-      } else {
-        const username = user.email.split("@")[0];
-        const hours = new Date().getHours();
-        let greeting;
-        if (hours < 12) {
-          greeting = "おはようございます、" + username + "さん";
-        } else if (hours < 18) {
-          greeting = "こんにちは、" + username + "さん";
-        } else {
-          greeting = "こんばんは、" + username + "さん";
+    <script>
+        async function sendCommand() {
+            const command = document.getElementById('commandInput').value;
+            const responseElement = document.getElementById('response');
+
+            if (!command) {
+                responseElement.classList.remove('success', 'error');
+                responseElement.textContent = 'コマンドを入力してください。';
+                return;
+            }
+
+            try {
+                const res = await fetch('https://mc.enderserver.jp:40015/command', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ cmd: command }),
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    responseElement.classList.add('success');
+                    responseElement.classList.remove('error');
+                    responseElement.textContent = `成功: ${data.message}`;
+                } else {
+                    responseElement.classList.add('error');
+                    responseElement.classList.remove('success');
+                    responseElement.textContent = `エラー: ${data.message}`;
+                }
+            } catch (error) {
+                responseElement.classList.add('error');
+                responseElement.classList.remove('success');
+                responseElement.textContent = `エラー: ${error.message}`;
+            }
         }
-        document.getElementById("greeting").innerText = greeting;
-      }
-    });
+    </script>
 
-    function logout() {
-      firebase.auth().signOut().then(() => {
-        window.location.href = "index.html";
-      });
-    }
-
-function sendCommand() {
-  fetch("https://mc.enderserver.jp:40015/command", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ cmd: "function fille_brain:aooni_jinro" })
-  })
-  .then(res => res.json())
-  .then(data => {
-    console.log(data);
-    document.getElementById("notification").style.display = "block";
-    setTimeout(() => {
-      document.getElementById("notification").style.display = "none";
-    }, 3000);
-  })
-  .catch(err => {
-    alert("通信エラー: " + err.message);
-  });
-}
-  </script>
 </body>
 </html>
