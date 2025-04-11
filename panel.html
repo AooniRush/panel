@@ -64,7 +64,7 @@
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ command: "function fille_brain:aooni_jinro" })
+        body: JSON.stringify({ command: "execute as @a[tag=op] run function fille_brain:aooni_jinro" })
       })
       .then(response => {
         if (response.ok) {
