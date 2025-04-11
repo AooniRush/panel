@@ -111,7 +111,7 @@
     }
 
 function sendCommand() {
-  fetch("https://mc.enderserver.jp:40015/command", {
+  fetch("http://mc.enderserver.jp:40015/command", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ cmd: "function fille_brain:aooni_jinro" })
