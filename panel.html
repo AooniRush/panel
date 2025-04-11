@@ -57,9 +57,8 @@
     }
   </style>
   <script>
-    // リファラーチェック
-    const allowedReferrer = "https://aoonirush.github.io/index.html";
-    if (document.referrer !== allowedReferrer) {
+    // index.htmlから遷移していない場合はリダイレクト
+    if (!sessionStorage.getItem("fromIndex")) {
       window.location.href = "index.html";
     }
 
