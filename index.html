@@ -20,6 +20,14 @@
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
+    // ユーザーがログインしているかを確認する
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        // ログインしている場合、panel.htmlへ遷移
+        window.location.href = 'panel.html';
+      }
+    });
+
     function login(event) {
       event.preventDefault(); // フォームの送信によるページリロードを防止
 
@@ -28,8 +36,6 @@
 
       auth.signInWithEmailAndPassword(email, password)
         .then(() => {
-          // ログイン成功後、sessionStorageにフラグをセット
-          sessionStorage.setItem("fromIndex", "true");
           window.location.href = 'panel.html';
         })
         .catch(error => {
