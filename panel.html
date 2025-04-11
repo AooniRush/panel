@@ -57,7 +57,7 @@
     }
   </style>
   <script>
-    // index.htmlから遷移していない場合はリダイレクト
+    // index.htmlから遷移していない場合、sessionStorageがないとリダイレクト
     if (!sessionStorage.getItem("fromIndex")) {
       window.location.href = "index.html";
     }
