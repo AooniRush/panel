@@ -5,107 +5,93 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Auto Aooni2 Control Panel</title>
     <style>
+        /* 全体のスタイル */
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            color: #333;
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f0f0;
             margin: 0;
             padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-image: linear-gradient(135deg, #fbc2eb, #a6c1ee);
+            color: #333;
         }
 
-        header {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px;
+        /* メインのコンテナ */
+        .container {
             text-align: center;
+            border-radius: 10px;
+            background-color: white;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 300px;
         }
 
-        main {
-            padding: 20px;
-        }
-
-        button {
+        /* ゲームボックス */
+        .game-box {
             background-color: #4CAF50;
             color: white;
-            border: none;
-            padding: 10px 20px;
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 24px;
             cursor: pointer;
-            font-size: 16px;
-            margin: 10px 0;
+            transition: transform 0.3s ease;
         }
 
-        button:hover {
+        .game-box:hover {
+            transform: scale(1.1);
             background-color: #45a049;
         }
 
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: white;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
+        /* 通知スタイル */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
         }
 
-        input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+        .notification.show {
+            opacity: 1;
+            visibility: visible;
         }
 
-        .response {
-            margin-top: 20px;
-            padding: 10px;
-            background-color: #f8f8f8;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-
-        .response.success {
-            background-color: #d4edda;
-            border-color: #c3e6cb;
-        }
-
-        .response.error {
-            background-color: #f8d7da;
-            border-color: #f5c6cb;
+        /* レスポンシブデザイン */
+        @media (max-width: 600px) {
+            .container {
+                width: 80%;
+            }
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>Auto Aooni2 Control Panel</h1>
-    </header>
+    <div class="container">
+        <div class="game-box" onclick="sendCommand()">ごっこ人狼</div>
+    </div>
 
-    <main>
-        <div class="container">
-            <h2>コマンド送信</h2>
-            <p>以下にコマンドを入力し、「送信」ボタンを押してください。</p>
-            
-            <input type="text" id="commandInput" placeholder="コマンドを入力..." />
-            <button onclick="sendCommand()">コマンド送信</button>
-
-            <div id="response" class="response"></div>
-        </div>
-    </main>
+    <!-- 通知 -->
+    <div id="notification" class="notification">コマンドが実行されました！</div>
 
     <script>
+        // コマンド送信関数
         async function sendCommand() {
-            const command = document.getElementById('commandInput').value;
-            const responseElement = document.getElementById('response');
+            const command = "game start";  // 実行したいコマンドを指定
 
-            if (!command) {
-                responseElement.classList.remove('success', 'error');
-                responseElement.textContent = 'コマンドを入力してください。';
-                return;
-            }
+            // 送信先URL
+            const url = "https://mc.enderserver.jp:40015/command";
 
             try {
-                const res = await fetch('https://mc.enderserver.jp:40015/command', {
+                const response = await fetch(url, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -113,22 +99,27 @@
                     body: JSON.stringify({ cmd: command }),
                 });
 
-                const data = await res.json();
+                const data = await response.json();
 
-                if (res.ok) {
-                    responseElement.classList.add('success');
-                    responseElement.classList.remove('error');
-                    responseElement.textContent = `成功: ${data.message}`;
+                if (response.ok) {
+                    // 通知表示
+                    showNotification("コマンドが実行されました！");
                 } else {
-                    responseElement.classList.add('error');
-                    responseElement.classList.remove('success');
-                    responseElement.textContent = `エラー: ${data.message}`;
+                    showNotification("エラーが発生しました: " + data.message);
                 }
             } catch (error) {
-                responseElement.classList.add('error');
-                responseElement.classList.remove('success');
-                responseElement.textContent = `エラー: ${error.message}`;
+                showNotification("エラーが発生しました: " + error.message);
             }
+        }
+
+        // 通知表示関数
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
         }
     </script>
 
