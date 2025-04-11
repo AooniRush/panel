@@ -110,32 +110,24 @@
       });
     }
 
-    function sendCommand() {
-      fetch("https://mc.enderserver.jp:40015/command", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          cmd: "function fille_brain:aooni_jinro"
-        })
-      })
-      .then(res => {
-        if (res.ok) {
-          const note = document.getElementById("notification");
-          note.style.display = "block";
-          setTimeout(() => {
-            note.style.display = "none";
-          }, 3000);
-        } else {
-          alert("コマンドの送信に失敗しました");
-        }
-      })
-      .catch(err => {
-        console.error("エラー:", err);
-        alert("通信エラーが発生しました");
-      });
-    }
+function sendCommand() {
+  fetch("https://mc.enderserver.jp:40015/command", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ cmd: "function fille_brain:aooni_jinro" })
+  })
+  .then(res => res.json())
+  .then(data => {
+    console.log(data);
+    document.getElementById("notification").style.display = "block";
+    setTimeout(() => {
+      document.getElementById("notification").style.display = "none";
+    }, 3000);
+  })
+  .catch(err => {
+    alert("通信エラー: " + err.message);
+  });
+}
   </script>
 </body>
 </html>
