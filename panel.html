@@ -45,7 +45,6 @@
       transform: scale(1.05);
     }
 
-    /* 時間に応じた挨拶 */
     .greeting {
       position: absolute;
       top: 10px;
@@ -54,7 +53,6 @@
       color: white;
     }
 
-    /* ログアウトボタン */
     .logout-button {
       background-color: red;
       color: white;
@@ -82,11 +80,14 @@
     }
   </style>
   <script>
-    // リファラーチェック
-    const allowedReferrer = "https://aoonirush.github.io/index.html";
-    if (document.referrer !== allowedReferrer) {
-      window.location.href = "index.html";
-    }
+    const auth = firebase.auth();
+
+    // ユーザーがログインしていない場合、ログインページへリダイレクト
+    auth.onAuthStateChanged(user => {
+      if (!user) {
+        window.location.href = 'index.html'; // ログインしていない場合、ログインページへ遷移
+      }
+    });
 
     // 時間に応じた挨拶を表示
     function getGreeting() {
